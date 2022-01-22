@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+  <title>Show Student Details</title>
+</head>
+
+<body>
+  <%- include('../partials/header'); %>
+
+
+    <div class="container-sm">
+
+      <form action="#">
+        <div class="form-group mb-2 mt-2">
+          <label for="id">Enter your Student ID</label>
+          <input type="text" class="form-control" placeholder="XXXX-XXXX-XXXX" pattern="[0-9]{12}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4">Show Details</button>
+      </form>
+
+    </div>
+    <div class="container-sm mt-4">
+      <p id="name" class="list-group-item list-group-item-success mt-2 mb-2" style="display: none;"></p>
+      <p id="age" class="list-group-item list-group-item-success mt-2 mb-2" style="display: none;"></p>
+      <p id="batchID" class="list-group-item list-group-item-success mt-2 mb-2" style="display: none;"></p>
+    </div>
+
+
+    <%- include('../partials/footer'); %>
+
+
+      <script>
+        const inputForm = document.querySelector('form');
+        const inputElement = document.querySelector('input');
+
+        // Adding an eventListener and printing to the web app
+        inputForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+
+          const studentID = inputElement.value;
+          document.getElementById('age').style.display = 'block';
+          document.getElementById('age').innerHTML = 'Loading... Please wait';
+
+          fetch(`http://localhost:3000/student/info?id=${studentID}`).then((response) => {
+            response.json().then((data) => {
+              if (data.error) {
+                document.getElementById('age').style.background = '#ffeeba';
+                document.getElementById('age').innerHTML = data.error;
+
+                document.getElementById('name').style.display = 'none';
+                document.getElementById('batchID').style.display = 'none';
+              } else {
+                document.getElementById('name').style.display = 'block';
+                document.getElementById('batchID').style.display = 'block';
+                document.getElementById('age').style.background = '#d1e7dd';
+
+                document.getElementById('name').innerHTML = `Name: ${data.name}`;
+                document.getElementById('age').innerHTML = `Age: ${data.age}`;
+                document.getElementById('batchID').innerHTML = `Batch Id: ${data.batchID}`;
+              }
+            });
+          });
+        });
+      </script>
+</body>
+
+</html>

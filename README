@@ -1,0 +1,20 @@
+Tech Stacks used: Node.JS, Express.JS, Postgres SQL, EJS
+
+To run the app clone the repo or download the files and run "npm i" which will install all the required dependencies.
+
+The app will work best in POSTMAM for testing the API.
+
+Assumptions made: 
+1. The user can make the payment and from the date of payment the user will have validity of 1 month.
+
+Edge Case Handeled: If user has an existing validity then the new payment made will add 1 month to the previous validity and extend it
+Otherwise the validity will be 1 month from today i.e. the date of payment.
+
+2. The User can register with basic details and will get an confirmation upon doing the same.
+
+3. Also the user can view the batch history and the past payments made from the api. However I felt short at hooking this particular page in the frontend but its working perfectly fine when tested through POSTMAN.
+
+4. If in case the user wants to change his/her batch then they can do it at the time of making the payment and specifying then and there only in which batch do they wanna join.
+
+
+

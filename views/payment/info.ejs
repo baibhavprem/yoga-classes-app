@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+  <title>Payment History</title>
+</head>
+
+<body>
+  <%- include('../partials/header'); %>
+
+    <div class="container-sm">
+
+      <form action="#">
+        <div class="form-group mb-2 mt-2">
+          <label for="id">Enter your Student ID</label>
+          <input type="text" class="form-control" placeholder="XXXX-XXXX-XXXX" pattern="[0-9]{12}" name="id" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4">Show Details</button>
+      </form>
+
+      <h6 id="errorLog" class="mt-4 mb-4"></h6>
+      <table id="paymentData" class="table"></table>
+    </div>
+
+
+    <script>
+      const inputForm = document.querySelector('form');
+      const inputElement = document.querySelector('input');
+
+      inputForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const studentID = inputElement.value;
+        document.getElementById('errorLog').innerHTML = 'Loading... Please wait';
+
+        fetch(`http://localhost:3000/payment/paymentHistory?id=${studentID}`).then((response) => {
+          response.json().then((data) => {
+            if (data.error) {
+              document.getElementById('paymentData').innerHTML = '';
+              document.getElementById('errorLog').innerHTML = data.error;
+            }
+            else {
+              document.getElementById('errorLog').innerHTML = '';
+
+              const table = document.getElementById('paymentData');
+              table.innerHTML = '';
+              const head = document.createElement('tr');
+              const nameForHead = document.createElement('th');
+              const batchIDForHead = document.createElement('th');
+              const timeslotForHead = document.createElement('th');
+              const amountForHead = document.createElement('th');
+              const DOPForHead = document.createElement('th');
+              const validUptoForHead = document.createElement('th');
+
+              nameForHead.innerHTML = 'Student Name';
+              batchIDForHead.innerHTML = 'Batch ID';
+              timeslotForHead.innerHTML = 'Timeslot';
+              amountForHead.innerHTML = 'Amount';
+              DOPForHead.innerHTML = 'Date of Payment';
+              validUptoForHead.innerHTML = 'Valid Upto';
+
+              head.appendChild(nameForHead);
+              head.appendChild(batchIDForHead);
+              head.appendChild(timeslotForHead);
+              head.appendChild(amountForHead);
+              head.appendChild(DOPForHead);
+              head.appendChild(validUptoForHead);
+
+              table.appendChild(head);
+
+
+              for (let i = 0; i < data.length; i++) {
+                const dataElement = data[i];
+
+                // Creating table data elements for rendering dynamically
+                const row = document.createElement('tr');
+                const name = document.createElement('td');
+                const batchID = document.createElement('td');
+                const timeslot = document.createElement('td');
+                const amount = document.createElement('td');
+                const DOP = document.createElement('td');
+                const validUpto = document.createElement('td');
+
+                // Populating the data in the columns
+                name.innerHTML = dataElement.name;
+                batchID.innerHTML = dataElement.batchID;
+                timeslot.innerHTML = dataElement.timeslot;
+                amount.innerHTML = dataElement.amount;
+                const validDate = new Date(dataElement.validUpto);
+                const DOPDate = new Date(dataElement.dateOfPayment);
+                validUpto.innerHTML = validDate.toLocaleDateString();
+                DOP.innerHTML = DOPDate.toLocaleDateString();
+
+                // Appending the data elements in row element
+                row.appendChild(name);
+                row.appendChild(batchID);
+                row.appendChild(timeslot);
+                row.appendChild(amount);
+                row.appendChild(DOP);
+                row.appendChild(validUpto);
+
+                // Finally appending the filled row into the table
+                table.appendChild(row);
+              }
+            }
+          });
+        });
+      });
+    </script>
+
+    <%- include('../partials/footer'); %>
+
+</body>
+
+</html>
